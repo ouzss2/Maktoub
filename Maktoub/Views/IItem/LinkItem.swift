@@ -32,8 +32,8 @@ struct LinkItem: Identifiable {
         LinkItem(title: "Snapshot", destination: URL(string: "https://www.snapchat.com")!, imageName: "Snapchat", linkDescription: ""),
         LinkItem(title: "google plus", destination: URL(string: "https://plus.google.com")!, imageName: "Googleplus", linkDescription: ""),
         LinkItem(title: "Reddit", destination: URL(string: "https://www.reddit.com")!, imageName: "Reddit", linkDescription: ""),
-        LinkItem(title: "Twitter", destination: URL(string: "https://www.twitter.com")!, imageName: "Twitter", linkDescription: "")
-       // LinkItem(title: "Other", destination: URL(string: "")!, imageName: "Twitter", linkDescription: "")
+        LinkItem(title: "Twitter", destination: URL(string: "https://www.twitter.com")!, imageName: "Twitter", linkDescription: ""),
+        LinkItem(title: "Other", destination: URL(string: "https://www.twitter.com")!, imageName: "", linkDescription: "")
     ]
 
 }

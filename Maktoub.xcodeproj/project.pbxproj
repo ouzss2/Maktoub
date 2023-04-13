@@ -22,6 +22,7 @@
 		7E3B0CAF29D0360500A2004C /* ProductsOffline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3B0CAE29D0360500A2004C /* ProductsOffline.swift */; };
 		7E3B0CB329D03CF200A2004C /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3B0CB229D03CF200A2004C /* Card.swift */; };
 		7E3C9FE829DB9E5C00E01468 /* SwiftUIViewEditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3C9FE729DB9E5C00E01468 /* SwiftUIViewEditProfile.swift */; };
+		7E5511F229E5C5E50047EEC7 /* SwiftUIViewResetPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5511F129E5C5E50047EEC7 /* SwiftUIViewResetPassword.swift */; };
 		7E56B47F29DC8D9E00F3B320 /* CardDetailViewoProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E56B47E29DC8D9E00F3B320 /* CardDetailViewoProduct.swift */; };
 		7E56B48129DC8F2F00F3B320 /* CartManagerOnline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E56B48029DC8F2F00F3B320 /* CartManagerOnline.swift */; };
 		7E5FF17029DB161500C4BC3D /* Connectivity in Frameworks */ = {isa = PBXBuildFile; productRef = 7E5FF16F29DB161500C4BC3D /* Connectivity */; };
@@ -51,6 +52,7 @@
 		7EE6231E29CDAF3B00500D8D /* MaktoubUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6231D29CDAF3B00500D8D /* MaktoubUITests.swift */; };
 		7EE6232029CDAF3B00500D8D /* MaktoubUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6231F29CDAF3B00500D8D /* MaktoubUITestsLaunchTests.swift */; };
 		7EE6232F29CDB41F00500D8D /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6232E29CDB41F00500D8D /* SplashScreenView.swift */; };
+		7EF32AC929E617C600580005 /* UpdatePass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF32AC829E617C600580005 /* UpdatePass.swift */; };
 		7EF5F2A029DAD6A90083C6E2 /* Persondetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF5F29F29DAD6A90083C6E2 /* Persondetails.swift */; };
 		7EFE427629D632B400C12F23 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFE427529D632B400C12F23 /* NetworkMonitor.swift */; };
 /* End PBXBuildFile section */
@@ -88,6 +90,7 @@
 		7E3B0CAE29D0360500A2004C /* ProductsOffline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsOffline.swift; sourceTree = "<group>"; };
 		7E3B0CB229D03CF200A2004C /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		7E3C9FE729DB9E5C00E01468 /* SwiftUIViewEditProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewEditProfile.swift; sourceTree = "<group>"; };
+		7E5511F129E5C5E50047EEC7 /* SwiftUIViewResetPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewResetPassword.swift; sourceTree = "<group>"; };
 		7E56B47E29DC8D9E00F3B320 /* CardDetailViewoProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardDetailViewo\bProduct.swift"; sourceTree = "<group>"; };
 		7E56B48029DC8F2F00F3B320 /* CartManagerOnline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartManagerOnline.swift; sourceTree = "<group>"; };
 		7E5FF16D29DB12BA00C4BC3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -120,6 +123,7 @@
 		7EE6231D29CDAF3B00500D8D /* MaktoubUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaktoubUITests.swift; sourceTree = "<group>"; };
 		7EE6231F29CDAF3B00500D8D /* MaktoubUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaktoubUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		7EE6232E29CDB41F00500D8D /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
+		7EF32AC829E617C600580005 /* UpdatePass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePass.swift; sourceTree = "<group>"; };
 		7EF5F29F29DAD6A90083C6E2 /* Persondetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persondetails.swift; sourceTree = "<group>"; };
 		7EFE427529D632B400C12F23 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -165,6 +169,7 @@
 				7EE21F8329DD97A000B8AFF9 /* SwiftUIViewFinalView.swift */,
 				7E66986F29DECA100081C9C6 /* SwiftUIViewLinks.swift */,
 				7E81792629E4AD40002AAFED /* IPADview.swift */,
+				7E5511F129E5C5E50047EEC7 /* SwiftUIViewResetPassword.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -179,6 +184,13 @@
 				7E353FAE29E38B86003B8DFD /* LinkManager.swift */,
 			);
 			path = IItem;
+			sourceTree = "<group>";
+		};
+		7E5511EE29E59E8D0047EEC7 /* Opad */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Opad;
 			sourceTree = "<group>";
 		};
 		7EE622F629CDAF3900500D8D = {
@@ -215,6 +227,7 @@
 		7EE6230129CDAF3900500D8D /* Maktoub */ = {
 			isa = PBXGroup;
 			children = (
+				7E5511EE29E59E8D0047EEC7 /* Opad */,
 				7E5FF16D29DB12BA00C4BC3D /* Info.plist */,
 				7E120CE229D6EF520061FA17 /* Views */,
 				7E38623029CF1F42001EB59D /* Person.swift */,
@@ -265,6 +278,7 @@
 				7E287A6F29DCC083008C60EB /* ImagePickerView.swift */,
 				7E66987129DEDC2F0081C9C6 /* DropdownMenuOption.swift */,
 				7E353FAC29E384B4003B8DFD /* FileLink.swift */,
+				7EF32AC829E617C600580005 /* UpdatePass.swift */,
 			);
 			path = classes;
 			sourceTree = "<group>";
@@ -423,10 +437,12 @@
 				7EE21F8629DDA8FE00B8AFF9 /* SwiftUIViewFollow.swift in Sources */,
 				7ECD653C29CDCE8900C055BB /* LoginView.swift in Sources */,
 				7E66987029DECA100081C9C6 /* SwiftUIViewLinks.swift in Sources */,
+				7EF32AC929E617C600580005 /* UpdatePass.swift in Sources */,
 				7E14CB1629D9A1640034C7E6 /* LinkItem.swift in Sources */,
 				7ED401F029D1D0DC00388F96 /* CardC.swift in Sources */,
 				7E3C9FE829DB9E5C00E01468 /* SwiftUIViewEditProfile.swift in Sources */,
 				7E2ABBDB29E3217800569E1D /* SwiftUIViewTest.swift in Sources */,
+				7E5511F229E5C5E50047EEC7 /* SwiftUIViewResetPassword.swift in Sources */,
 				7EFE427629D632B400C12F23 /* NetworkMonitor.swift in Sources */,
 				7ECB490629D45A2100EA44CC /* ConfirmView.swift in Sources */,
 				7ED401EE29D1A57400388F96 /* CardDetailView.swift in Sources */,
@@ -610,6 +626,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Maktoub/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Maktub;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSContactsUsageDescription = "this app need to acess your contact";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -650,6 +667,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Maktoub/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Maktub;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSContactsUsageDescription = "this app need to acess your contact";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -16,43 +16,68 @@ struct SwiftUIViewProducts: View {
     @ObservedObject var networkMonitor = NetworkMonitor()
     let gradiant = Gradient(colors: [Color("Black"),Color("Center"),Color("Gold")])
     @ObservedObject var viewModelc = CardListViewModelPr()
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    
+    @ViewBuilder
     var body: some View {
-       
-        NavigationView {
-                  VStack {
-                      if networkMonitor.isConnected {
-                          VStack{
-                             
-                              if viewModelc.cardList.isEmpty {
-                                  ProgressView()
-                                      .progressViewStyle(CircularProgressViewStyle())
-                              } else {
-                                  CardListViewPr(cardList: viewModelc.cardList).padding()
+        if horizontalSizeClass == .compact {
+            NavigationView {
+                      VStack {
+                          if networkMonitor.isConnected {
+                              VStack{
+                                 
+                                  if viewModelc.cardList.isEmpty {
+                                      ProgressView()
+                                          .progressViewStyle(CircularProgressViewStyle())
+                                  } else {
+                                      CardListViewPr(cardList: viewModelc.cardList).padding()
+                                  }
                               }
+                          } else {
+                              Disconected()
                           }
-                      } else {
-                          Disconected()
+                         
                       }
-                     
+                      .frame(maxWidth: .infinity, maxHeight: .infinity)
+                      .onAppear {
+                          viewModelc.getCardListpr()
+                      }
+                      
+                      .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
+                      .ignoresSafeArea(.all)
+                      
                   }
-                  .frame(maxWidth: .infinity, maxHeight: .infinity)
-                  .onAppear {
-                      viewModelc.getCardListpr()
-                  }
-                  
-                  .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
-                  .ignoresSafeArea(.all)
-                  
-              }
-        
-        
-        
-        
-                   
-               }
-           
-                 
-
+        }else {
+            NavigationView {
+                      VStack {
+                          if networkMonitor.isConnected {
+                              VStack{
+                                 
+                                  if viewModelc.cardList.isEmpty {
+                                      ProgressView()
+                                          .progressViewStyle(CircularProgressViewStyle())
+                                  } else {
+                                      CardListViewPr(cardList: viewModelc.cardList).padding()
+                                  }
+                              }
+                          } else {
+                              Disconected()
+                          }
+                         
+                      }
+                      .frame(maxWidth: .infinity, maxHeight: .infinity)
+                      .onAppear {
+                          viewModelc.getCardListpr()
+                      }
+                      
+                      .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
+                      .ignoresSafeArea(.all)
+                      
+            }.navigationViewStyle(StackNavigationViewStyle())
+        }
+   
+}
 }
 
 struct SwiftUIViewProducts_Previews: PreviewProvider {

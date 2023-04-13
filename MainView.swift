@@ -12,11 +12,17 @@ enum Tab {
 }
 
 struct MainView: View {
-   
+    let gradiant = Gradient(colors: [Color("Black"),Color("Center"),Color("Gold")])
+    
     @State private var selection: Tab = .profile
     @State private var showLoginView = false
     @State private var selectedTab = 0
     @State var isreg:Bool = false
+    @State private var showingLogoutAlert = false
+    @State var emailsent:String = UserDefaults.standard.string(forKey: "mail") ?? ""
+    //@State var user: Persondetails?
+    let manage = LinkManager()
+   
   
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -53,24 +59,31 @@ struct MainView: View {
    
     @ViewBuilder
     var body: some View {
-        
+       
+        VStack{
+            
+       
         if horizontalSizeClass == .compact {
             ZStack(alignment: .bottom) {
                 VStack {
                     Spacer()
                     viewForSelectedTab()
                     Spacer()
+                    
                 }
                 tabBar()
+                
+                
             }
-         
-            .padding(.bottom, 20)
+            .ignoresSafeArea(.all)
+            .navigationBarBackButtonHidden(true)
+           
             .onAppear {
                 self.selectedTab = 1
                   
             }
-            .edgesIgnoringSafeArea(.all)
-            .navigationBarBackButtonHidden(true)
+           
+            
         }else{
             GeometryReader { geometry in
                       ZStack(alignment: .bottom) {
@@ -80,10 +93,12 @@ struct MainView: View {
                                   viewForSelectedTab()
                               
                               Spacer()
+                              
                           }	
                           tabBar()
+                        
                       }
-                      .padding(.bottom, 20)
+                      
                       .onAppear {
                           self.selectedTab = 1
                       }
@@ -92,6 +107,11 @@ struct MainView: View {
                       .frame(width: geometry.size.width, height: geometry.size.height)
                   }
         }
+            
+        }
+        .ignoresSafeArea(.all)
+     
+   
      
     }
     
@@ -113,54 +133,69 @@ struct MainView: View {
     }
     
     func tabBar() -> some View {
+        
         HStack(spacing: 8) {
             Spacer()
-            tabBarItem(imageName: "house", index: 0)
+                tabBarItem(imageName: "house", index: 0)
             tabBarItem(imageName: "person", index: 1)
             tabBarItem(imageName: "info.circle.fill", index: 2)
             tabBarItem(imageName: "heart.fill", index: 3)
             logoutButton()
             Spacer()
-        }
-        .padding()
+        }.padding()
         .background(Color("Gold"))
         .shadow(radius: 0)
+        
+        
     }
     
     func tabBarItem(imageName: String, index: Int) -> some View {
+      
         Button(action: { self.selectedTab = index }) {
             Image(systemName: imageName)
                 .foregroundColor(selectedTab == index ? .white : .black)
                 .font(.system(size: 30))
                 .padding()
         }
-        .background(selectedTab == index ? Color.cyan : Color.clear)
+       // .background(selectedTab == index ? Color.cyan : Color.clear)
+    
     }
     
     func logoutButton() -> some View {
         VStack {
             Button(action: {
-                UserDefaults.standard.set(false, forKey: "isLoggedIn")
-                UserDefaults.standard.set("", forKey: "mail")
-                isreg = true
-                selectedTab = 4
+                showingLogoutAlert = true
             }) {
                 Image(systemName: "arrow.right.to.line")
                     .font(.system(size: 30))
                     .foregroundColor(selectedTab == 4 ? .white : .black)
                     .padding()
             }
+           
             .fullScreenCover(isPresented: $isreg, content: {
-                    LoginView()
-                        .navigationBarHidden(true)
-                        .onDisappear {
+                LoginView()
+                    .navigationBarHidden(true)
+                    .onDisappear {
+                        SwiftUIViewEditProfile().onDisappear{
                             presentationMode.wrappedValue.dismiss()
                         }
-                
+                        presentationMode.wrappedValue.dismiss()
+                    }
             })
-            .background(selectedTab == 4 ? Color.blue : Color.clear)
+           
         }
-    }
+        .alert(isPresented: $showingLogoutAlert) {
+            Alert(title: Text("Logout"), message: Text("Are you sure you want to log out?"), primaryButton: .destructive(Text("Logout")) {
+                UserDefaults.standard.set(false, forKey: "isLoggedIn")
+                UserDefaults.standard.set("", forKey: "mail")
+                UserDefaults.standard.set("", forKey: "nom")
+                UserDefaults.standard.set("", forKey: "prenom")
+                UserDefaults.standard.set("", forKey: "tel")
+                isreg = true
+                selectedTab = 4
+                presentationMode.wrappedValue.dismiss()
+            }, secondaryButton: .cancel())
+        }}
 }
 
 struct MainView_Previews: PreviewProvider {

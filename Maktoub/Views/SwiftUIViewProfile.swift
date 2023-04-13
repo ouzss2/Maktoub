@@ -27,7 +27,10 @@ struct SwiftUIViewProfile: View {
     @State private var isShowingImagePicker = false
     @State private var showChangeImageAlert = false
     @State private var showingPopup = false
+    @State private var isloaded = false
+    @State private var showSettings = false
     let manage = LinkManager()
+    
     func loadImage() {
         guard let inputImage = image else { return }
         let compressedImage = inputImage.jpegData(compressionQuality: 0.5)
@@ -36,428 +39,237 @@ struct SwiftUIViewProfile: View {
     }
     @State private var refreshFlag = false
     
-    @State private var name:String = (UserDefaults.standard.string(forKey: "nom") ?? "")
-    @State private var tel:String =  (UserDefaults.standard.string(forKey: "tel") ?? "")
+   
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     @ViewBuilder
     var body: some View {
-        if horizontalSizeClass == .compact {
-        GeometryReader { geometry in
-            NavigationView{
-                ScrollView {
-                    ZStack(alignment: .bottom) {
-                        // Background cover
-                        if let imageData = Data(base64Encoded: user?.couverture ?? ""),
-                           let image = UIImage(data: imageData) {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(maxWidth: geometry.size.width)
-                                .frame(height: 200)
-                                .padding(.top,-20)
-                                .onTapGesture {
-                                    showChangeImageAlert = true
-                                    nmbr = 2
-                                }
-                            
-                        } else {
-                            Image("back")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(maxWidth: geometry.size.width)
-                                .frame(height: 200)
-                                .padding(.top,-20)
-                                .onTapGesture {
-                                    showChangeImageAlert = true
-                                    nmbr = 2
-                                    
-                                }
-                        }
-                        
-                        
-                        // User image and name
-                        VStack {
-                            if let imageData = Data(base64Encoded: user?.photo ?? ""),
-                               let image = UIImage(data: imageData) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 120, height: 120)
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                    .shadow(radius: 5)
-                                    .onTapGesture {
-                                        // isShowingImagePicker = true
-                                        showChangeImageAlert = true
-                                        nmbr = 1
-                                        
-                                    }
-                            } else {
-                                Image("perso")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 120, height: 120)
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                    .shadow(radius: 5)
-                                    .onTapGesture {
-                                        //isShowingImagePicker = true
-                                        showChangeImageAlert = true
-                                        nmbr = 1
-                                        
-                                    }
-                                
-                            }
-                            
-                            
-                        }
-                    } .alert(isPresented: $showChangeImageAlert) {
-                        Alert(
-                            title: Text("Change Image?"),
-                            message: Text("Do you want to change the image?"),
-                            primaryButton: .default(Text("Yes"), action: {
-                                isShowingImagePicker = true
-                                
-                                
-                            }),
-                            secondaryButton: .cancel(Text("No"))
-                        )
-                    }
-                    .padding(.bottom,70)
-                    .sheet(isPresented: $isShowingImagePicker, onDismiss: loadImage) {
-                        
-                        ImagePicker(image: $image,emailsentup: $emailsent,nbr: $nmbr,refresh: $refreshFlag)
-                        
-                    }
+     
+        //HStack {
+            VStack {
+                
+                GeometryReader { geometry in
                     
-                    HStack {
-                        phoneButton()
-                        Spacer()
-                        VStack {
-                            Button(action: {
-                                // Add your button action here
-                                let baseUrl = "http://104.225.216.185:9300/profile/"
-                                let queryString = user?.mail ?? ""
-                                let link = baseUrl + queryString
-                                guard let url = URL(string: link) else {
-                                    return
-                                }
-                                
-                                let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                   let rootViewController = windowScene.windows.first?.rootViewController {
-                                    // For iPad, we need to set the presentation style of the share sheet
-                                    activityViewController.popoverPresentationController?.sourceView = rootViewController.view
-                                    activityViewController.popoverPresentationController?.sourceRect = CGRect(x: rootViewController.view.bounds.midX, y: rootViewController.view.bounds.midY, width: 0, height: 0)
-                                    
-                                    rootViewController.present(activityViewController, animated: true, completion: nil)
-                                }
-                                else {
-                                    // For iPhone, we can present the share sheet directly
-                                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                       let rootViewController = windowScene.windows.first?.rootViewController {
-                                        rootViewController.present(activityViewController, animated: true, completion: nil)
-                                    }
-                                    
-                                }
-                                
-                            }) {
-                                Text("Share Link")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.yellow)
-                                    .padding(.all,1)
-                                    .background(Color.black)
-                            }
-                        }
+                    NavigationView{
                         
-                        
-                      
-
-                    }.padding(.horizontal,50)
-                    
-                    
-                    
-                    VStack{
-                        Text(user?.nom ?? "")
-                            .font(.system(size:28).bold())
-                            .foregroundColor(.white)
-                            .padding(.top,5)
-                        HStack {
-                            Image(systemName: "briefcase.fill")
-                                .foregroundColor(.gray)
-                                .padding(.leading,5)
-                            Text(user?.fonction ?? "Mobile and web Developer")
-                                .font(.system(size:22).bold())
-                                .foregroundColor(.white)
-                        }.padding(.top,10)
-                    }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
-                    VStack{
-                        
-                        GridView(lst: manage.links).padding(.top,20)
-                        LazyVStack {
-                            Spacer()
-                            VStack {
-                                
-                                Button(action: {
-                                    isedit = true
-                                }) {
-                                    Text("Edit Profile")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .background(Color.black)
-                                }
-                                .fullScreenCover(isPresented: $isedit, content: {
-                                    SwiftUIViewEditProfile()
-                                        .navigationBarHidden(true)
-                                    
-                                })
-                                Image("")
-                                    .frame(height: 150)
-                            }
-                            Spacer()
-                        }.padding(.top,50)
-                        
-                    }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
-                    
-                }.background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
-                    .onAppear {
-                        getUserByEmail(email: emailsent) { person in
-                            self.user = person
-                            UserDefaults.standard.set(user?.nom, forKey: "nom")
-                            UserDefaults.standard.set(user?.prenom, forKey: "prenom")
-                            UserDefaults.standard.set(user?.tel, forKey: "tel")
-                        }
-                        
-                        manage.clearLinks()
-                        fetchLinkItems(email: emailsent) { linkItems in
-                            var uniqueLinks = [FileLink]()
-                            for item in linkItems {
-                                if !uniqueLinks.contains(where: { $0.name == item.name && $0.url == item.url }) {
-                                    uniqueLinks.append(FileLink(email: "", name: item.name, url: item.url))
-                                }
-                            }
-                            // Add the unique links to `manage`
-                            for link in uniqueLinks {
-                                print(link.url)
-                                manage.add(link: link)
-                            }
-                        }
-                                         }
-            } }
-        }else {
-            GeometryReader { geometry in
-                VStack{
-                    ScrollView {
-                        VStack() {
-                            // Background cover
-                            if let imageData = Data(base64Encoded: user?.couverture ?? ""),
-                               let image = UIImage(data: imageData) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: geometry.size.width)
-                                    .frame(height: 200)
-                                    .padding(.top,-20)
-                                    .onTapGesture {
-                                        showChangeImageAlert = true
-                                        nmbr = 2
-                                    }
-                                
-                            } else {
-                                Image("back")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: geometry.size.width)
-                                    .frame(height: 200)
-                                    
-                                    .onTapGesture {
-                                        showChangeImageAlert = true
-                                        nmbr = 2
-                                        
-                                    }
-                            }
-                            
-                            
-                            // User image and name
-                            VStack {
-                                if let imageData = Data(base64Encoded: user?.photo ?? ""),
+                        ScrollView {
+                            ZStack{
+                                // Background cover
+                                if let imageData = Data(base64Encoded: user?.couverture ?? ""),
                                    let image = UIImage(data: imageData) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
-                                        .frame(width: 120, height: 120)
-                                        .clipShape(Circle())
-                                        .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                        .shadow(radius: 5)
+                                        .frame(maxWidth: geometry.size.width)
+                                        .frame(height: 200)
+                                        .padding(.top,-20)
                                         .onTapGesture {
-                                            // isShowingImagePicker = true
                                             showChangeImageAlert = true
-                                            nmbr = 1
-                                            
+                                            nmbr = 2
                                         }
+                                    
                                 } else {
-                                    Image("perso")
+                                    Image("back")
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
-                                        .frame(width: 120, height: 120)
-                                        .clipShape(Circle())
-                                        .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                        .shadow(radius: 5)
+                                        .frame(maxWidth: geometry.size.width)
+                                        .frame(height: 200)
+                                        .padding(.top,-20)
                                         .onTapGesture {
-                                            //isShowingImagePicker = true
                                             showChangeImageAlert = true
-                                            nmbr = 1
+                                            nmbr = 2
                                             
                                         }
-                                    
                                 }
                                 
                                 
-                            }
-                        } .alert(isPresented: $showChangeImageAlert) {
-                            Alert(
-                                title: Text("Change Image?"),
-                                message: Text("Do you want to change the image?"),
-                                primaryButton: .default(Text("Yes"), action: {
-                                    isShowingImagePicker = true
-                                    
-                                    
-                                }),
-                                secondaryButton: .cancel(Text("No"))
-                            )
-                        }
-                        .padding(.bottom,10)
-                        .sheet(isPresented: $isShowingImagePicker, onDismiss: loadImage) {
-                            
-                            ImagePicker(image: $image,emailsentup: $emailsent,nbr: $nmbr,refresh: $refreshFlag)
-                            
-                        }
-                        
-                        HStack {
-                            phoneButton()
-                            Spacer()
-                            VStack
-                            {
-                                Button(action: {
-                                    // Add your button action here
-                                    let baseUrl = "http://104.225.216.185:9300/profile/"
-                                    let queryString = user?.mail ?? ""
-                                    let link = baseUrl + queryString
-                                    guard let url = URL(string: link) else {
-                                        return
-                                    }
-                                    
-                                    let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                    
-                                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                       let rootViewController = windowScene.windows.first?.rootViewController {
-                                        // For iPad, we need to set the presentation style of the share sheet
-                                        activityViewController.popoverPresentationController?.sourceView = rootViewController.view
-                                        activityViewController.popoverPresentationController?.sourceRect = CGRect(x: rootViewController.view.bounds.midX, y: rootViewController.view.bounds.midY, width: 0, height: 0)
-                                        
-                                        rootViewController.present(activityViewController, animated: true, completion: nil)
-                                    }
-                                    else {
-                                        // For iPhone, we can present the share sheet directly
-                                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                           let rootViewController = windowScene.windows.first?.rootViewController {
-                                            rootViewController.present(activityViewController, animated: true, completion: nil)
-                                        }
+                                // User image and name
+                                VStack {
+                                    if let imageData = Data(base64Encoded: user?.photo ?? ""),
+                                       let image = UIImage(data: imageData) {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 120, height: 120)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.white, lineWidth: 3))
+                                            .shadow(radius: 5)
+                                            .onTapGesture {
+                                                showChangeImageAlert = true
+                                                nmbr = 1
+                                                
+                                            }
+                                    } else {
+                                        Image("perso")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 120, height: 120)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.white, lineWidth: 3))
+                                            .shadow(radius: 5)
+                                            .onTapGesture {
+                                                showChangeImageAlert = true
+                                                nmbr = 1
+                                                
+                                            }
                                         
                                     }
                                     
-                                }) {
-                                    Text("Share Link")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.yellow)
-                                        .padding(.all,1)
-                                        .background(Color.black)
+                                    
                                 }
+                            } .alert(isPresented: $showChangeImageAlert) {
+                                Alert(
+                                    title: Text("Change Image?"),
+                                    message: Text("Do you want to change the image?"),
+                                    primaryButton: .default(Text("Yes"), action: {
+                                        isShowingImagePicker = true
+                                        
+                                        
+                                    }),
+                                    secondaryButton: .cancel(Text("No"))
+                                )
+                            }
+                            .padding(.bottom,70)
+                            .sheet(isPresented: $isShowingImagePicker, onDismiss: loadImage) {
+                                
+                                ImagePicker(image: $image,emailsentup: $emailsent,nbr: $nmbr,refresh: $refreshFlag)
+                                
                             }
                             
-                            
-                          
-
-                        }.padding(.horizontal,50)
-                            .padding(.top,150)
-                        
-                        
-                        
-                        VStack{
-                            Text(user?.nom ?? "")
-                                .font(.system(size:28).bold())
-                                .foregroundColor(.white)
-                                .padding(.top,5)
+                            Divider()
                             HStack {
-                                Image(systemName: "briefcase.fill")
-                                    .foregroundColor(.gray)
-                                    .padding(.leading,5)
-                                Text(user?.fonction ?? "Mobile and web Developer")
-                                    .font(.system(size:22).bold())
-                                    .foregroundColor(.white)
-                            }.padding(.top,10)
-                        }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
-                        VStack{
-                            
-                            GridView(lst: manage.links).padding(.top,20)
-                            LazyVStack {
+                                phoneButton(telu: user?.nom ?? "",nameu: user?.tel ?? "")
                                 Spacer()
                                 VStack {
-                                    
                                     Button(action: {
-                                        isedit = true
+                                       
+                                        let baseUrl = "http://104.225.216.185:9300/profile/"
+                                        let queryString = user?.mail ?? ""
+                                        let link = baseUrl + queryString
+                                        guard let url = URL(string: link) else {
+                                            return
+                                        }
+
+                                        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+
+                                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                           let rootViewController = windowScene.windows.first?.rootViewController {
+                                            
+                                            // Set the presentation style of the share sheet for iPad
+                                            if UIDevice.current.userInterfaceIdiom == .pad {
+                                                activityViewController.popoverPresentationController?.sourceView = rootViewController.view
+                                                activityViewController.popoverPresentationController?.sourceRect = CGRect(x: rootViewController.view.bounds.midX, y: rootViewController.view.bounds.midY, width: 0, height: 0)
+                                            }
+                                            
+                                            rootViewController.present(activityViewController, animated: true, completion: nil)
+                                        }
+
+                                        
+                                        
                                     }) {
-                                        Text("Edit Profile")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                            .padding()
+                                        Text("Share Link")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.yellow)
+                                            .padding(.all,10)
                                             .background(Color.black)
                                     }
-                                    .fullScreenCover(isPresented: $isedit, content: {
+                                }
+                                Spacer()
+                                
+                                VStack {
+                                    Button(action: {
+                                        self.showSettings = true
+                                    }) {
+                                        Image(systemName: "gearshape")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .foregroundColor(.blue)
+                                            .frame(width: 30,height: 30)
+                                            .cornerRadius(10)
+                                    }
+                                    .fullScreenCover(isPresented: $showSettings, content: {
                                         SwiftUIViewEditProfile()
                                             .navigationBarHidden(true)
                                         
                                     })
-                                    Image("")
-                                        .frame(height: 150)
+                                    
                                 }
-                                Spacer()
-                            }.padding(.top,50)
+                                
+                            }.padding(.horizontal,50)
                             
-                        }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
+                            
+                            
+                            VStack{
+                                Text(user?.nom ?? "")
+                                    .font(.system(size:28).bold())
+                                    .foregroundColor(.white)
+                                    .padding(.top,5)
+                                HStack {
+                                    Image(systemName: "briefcase.fill")
+                                        .foregroundColor(.gray)
+                                        .padding(.leading,5)
+                                    Text(user?.fonction ?? "Mobile and web Developer")
+                                        .font(.system(size:22).bold())
+                                        .foregroundColor(.white)
+                                }.padding(.top,10)
+                            }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
+                            VStack{
+                                
+                                GridView(lst: manage.links).padding(.top,20)
+                                    .padding(.bottom,10)
+                                Divider()
+                                HStack{
+                                    Spacer()
+                                    Text("Other links")
+                                        .foregroundColor(Color.white)
+                                        .font(.system(size: 20, weight: .bold, design: .serif))
+                                        .padding(.bottom, 10)
+                                    Spacer()
+                                }
+                                ShowOtherLinks(lst: manage.links).padding(.top,20)
+                                
+                                
+                            }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
+                            
+                        }.background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
                         
-                    }.background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
-                        .onAppear {
-                            getUserByEmail(email: emailsent) { person in
-                                self.user = person
-                                UserDefaults.standard.set(user?.nom, forKey: "nom")
-                                UserDefaults.standard.set(user?.prenom, forKey: "prenom")
-                                UserDefaults.standard.set(user?.tel, forKey: "tel")
-                            }
-                            
-                            manage.clearLinks()
-                            fetchLinkItems(email: emailsent) { linkItems in
-                                var uniqueLinks = [FileLink]()
-                                for item in linkItems {
-                                    if !uniqueLinks.contains(where: { $0.name == item.name && $0.url == item.url }) {
-                                        uniqueLinks.append(FileLink(email: "", name: item.name, url: item.url))
-                                    }
-                                }
-                                // Add the unique links to `manage`
-                                for link in uniqueLinks {
-                                    print(link.url)
-                                    manage.add(link: link)
-                                }
-                            }
-                                             }
-                } }
+                        
+                    }.navigationViewStyle(StackNavigationViewStyle())
+                    
+                }
+                
+            }.onAppear {
+                getUserByEmail(email: emailsent) { person in
+                    self.user = person
+      
+                }
+               
+                manage.clearLinks()
+                fetchLinkItems(email: emailsent) { linkItems in
+                    var uniqueLinks = [FileLink]()
+                    for item in linkItems {
+                        if !uniqueLinks.contains(where: { $0.name == item.name && $0.url == item.url }) {
+                            uniqueLinks.append(FileLink(email: "", name: item.name, url: item.url))
+                        }
+                    }
+                    // Add the unique links to `manage`
+                    for link in uniqueLinks {
+                        
+                        manage.add(link: link)
+                    }
+                    print(manage.links)
+                   /* if user != nil {
+                      // print(user)
+                       isloaded = true
+                       }*/
+                }
         }
+      //  }
     }
+ 
+
     
-    private func phoneButton() -> some View {
+    private func phoneButton( telu:String, nameu:String) -> some View {
         Button(action: {
             showingPopup = true
         }) {
@@ -471,7 +283,7 @@ struct SwiftUIViewProfile: View {
                 
             }
         }.alert(isPresented: $showingPopup) {
-            Alert(title: Text("Add Contact"), message: Text("Do you want to save '\(name)' with telephone number '\(tel)'?"), primaryButton: .default(Text("OK"), action: {
+            Alert(title: Text("Add Contact"), message: Text("Do you want to save '\(nameu)' with telephone number '\(telu)'?"), primaryButton: .default(Text("OK"), action: {
                 // Execute code to save the data here
                 saveData()
             }), secondaryButton: .cancel())
@@ -534,7 +346,8 @@ func fetchLinkItems(email: String, completion: @escaping ([Linkeditem]) -> Void)
 }
 struct SwiftUIViewProfile_Previews: PreviewProvider {
     static var previews: some View {
-        SwiftUIViewProfile()
+        let us :Persondetails = Persondetails(idperson: 0, nom: "", prenom: "", photo: "", couverture: "", mail: "", password: "", tel: "", adresse: "", fonction: "", username: "", about: "", roles: [])
+        SwiftUIViewProfile(user: us)
     }
 }
 
@@ -660,10 +473,10 @@ struct ImagePicker: UIViewControllerRepresentable {
                        
                            
                         switch res {
-                                          case .success(let isSuccess):
-                                              if isSuccess {
+                                case .success(let isSuccess):
+                                if isSuccess {
                                                   // handle success case
-                                                  print("Image upload successful!")
+                                                print("Image upload successful!")
                                                   self.parent.refresh = true
                                                   // refresh the view here
                                               } else {
@@ -700,23 +513,13 @@ struct ImagePicker: UIViewControllerRepresentable {
                                           }
                    
                     }
-                    /*uploadImagec(uiImage,email: parent.emailsentup,urlup:url)*/
-                    
-                    
-                    
-                    
-                    
+   
                 }
                 
             }
             parent.presentationMode.wrappedValue.dismiss()
         }
     } }
-
-
-
-
-
 
 
 func uploadImage(_ image: UIImage, email: String, urlup:URL, imgname:String,completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -757,9 +560,7 @@ func uploadImage(_ image: UIImage, email: String, urlup:URL, imgname:String,comp
             if httpResponse.statusCode == 200 {
                 
                     completion(.success(true))
-                   
                     
-                
             } else {
                 completion(.success(false))
                 print("HTTP status code: \(httpResponse.statusCode)")
@@ -768,5 +569,32 @@ func uploadImage(_ image: UIImage, email: String, urlup:URL, imgname:String,comp
         
         task.resume()
     }
+
+
+struct ShowOtherLinks: View {
+    @State var lst: [FileLink]
+
+    var body: some View {
+       
+        ForEach(lst) { item in
+            if item.name.caseInsensitiveCompare("Other") == .orderedSame  {
+                HStack {
+                    Image(systemName: "globe")
+                        .foregroundColor(.black)
+                    Text(item.url)
+                        .underline()
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            guard let url = URL(string: item.url) else { return }
+                            UIApplication.shared.open(url)
+                        }
+                    
+                }
+            }
+        }
+            
+        Divider().padding(.top,150)
+    }
+}
 
 

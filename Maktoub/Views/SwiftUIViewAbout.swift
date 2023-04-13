@@ -65,7 +65,7 @@ struct SwiftUIViewAbout: View {
                               Spacer().padding(.top,100)
                           }
                          
-                      }
+                      }.padding(.horizontal,25)
                   }
               }
        

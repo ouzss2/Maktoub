@@ -26,6 +26,7 @@ struct SwiftUIViewEditProfile: View {
     @State  public var roles: [String] = []
     
     @State var islink:Bool = false
+    @State var ispass:Bool = false
     @Environment(\.presentationMode) var presentationMode
     func getUserByEmailtoupdate(email: String, completion: @escaping (Persondetails?) -> Void) {
         var components = URLComponents(string: "http://104.225.216.185:9300/persons/getUser")!
@@ -106,7 +107,10 @@ struct SwiftUIViewEditProfile: View {
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.horizontal,20)
    
+                        
+                        VStack{
                         HStack{
+                           
                             Button(action: {
                                 islink = true
                             }, label: {
@@ -126,12 +130,31 @@ struct SwiftUIViewEditProfile: View {
                                     }*/
                         })
                         }.padding(.top,20)
-                        
+                        HStack{
+                        Button(action: {
+                            ispass = true
+                        }, label: {
+                            Text("Update password")
+                                .font(.headline)
+                                .foregroundColor(Color("Gold"))
+                                .padding()
+                                .background(Color.black)
+                                .padding(.horizontal)
+                        })
+                       
+                        .fullScreenCover(isPresented: $ispass, content: {
+                            SwiftUIViewResetPassword()
+                                .navigationBarHidden(true)
+                                /*.onDisappear {
+                                    presentationMode.wrappedValue.dismiss()
+                                }*/
+                        }) }
+                    }
                         HStack{
                             TwoButtonViewUpdate(username: $username, Firstname: $Firstname, lastname: $lastname, password: $password, email: $email, Phone: $Phone, Adresse: $Adresse, idper: $idper, photo: $photo, couv: $couv, fonct: $fonct, roles: $roles, about: $about)
                                 .padding(.top,30)
                                 .padding(.bottom,30)
-                        }
+                        }.padding(.bottom,50)
                         
                     }
                     Spacer()

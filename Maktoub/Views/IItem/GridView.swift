@@ -56,7 +56,9 @@ struct GridView: View {
                  
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal,25)
+            Divider()
+            
            
         }
     
@@ -74,7 +76,7 @@ struct GridView: View {
                 Image(item.imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 70,height: 70)
+                    .frame(width: 50,height: 50)
                     .cornerRadius(10)
             
             }
@@ -111,9 +113,9 @@ struct PopupView: View {
             Text("Do you want to add Contact ?")
                 .padding()
             HStack{
-              //  Text(user.nom!).padding()
+             
                 Text(" : ")
-              //  Text(user.tel!)
+             
             }
             
             

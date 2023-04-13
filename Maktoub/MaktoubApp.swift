@@ -17,7 +17,7 @@ struct MaktoubApp: App {
         WindowGroup {
             SplashScreenView()
                 .environmentObject(cartManager)
-                .environmentObject(linkManager)
+                .environmentObject(linkManager)					
         }
     }
 }

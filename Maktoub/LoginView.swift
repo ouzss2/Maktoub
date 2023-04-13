@@ -14,11 +14,11 @@ struct LoginView: View {
     
     var body: some View{
         
-        NavigationView {
+        VStack {
                   ContentV()
                       .navigationBarBackButtonHidden(true)
                       .navigationViewStyle(StackNavigationViewStyle())
-              }
+        }.ignoresSafeArea(.all)
     }
     
 }
@@ -45,35 +45,35 @@ struct ContentV: View {
     @State private var isActive = false
     @State private var showRegisterView:Bool = false
     @State private var showProductView:Bool = false
-
-    let decoder = JSONDecoder()
     
-   
+    let decoder = JSONDecoder()
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     func loginUser(email: String, password: String, completion: @escaping (Bool) -> Void) {
         var components = URLComponents(string: "http://104.225.216.185:9300/persons/signin")!
         components.queryItems = [
             URLQueryItem(name: "email", value: email),
             URLQueryItem(name: "password", value: password),
         ]
-
+        
         var request = URLRequest(url: components.url!)
         request.httpMethod = "POST"
-
+        
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 // Hide progress bar
                 showProgressBar = false
             }
-
+            
             guard let data = data, let httpResponse = response as? HTTPURLResponse, error == nil else {
                 print("Error: \(error!)")
                 completion(false)
                 return
             }
-
+            
             print("Status code: \(httpResponse.statusCode)")
-
+            
             if (200...299).contains(httpResponse.statusCode) {
                 completion(true)
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
@@ -83,106 +83,140 @@ struct ContentV: View {
                 completion(false)
             }
         }
-
+        
         task.resume()
     }
-
-
-
+    
+    
+    
     
     @ViewBuilder
     var body: some View {
-        //  Text("Hello World").foregroundColor(.red)
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            // create phone layout
-            NavigationStack {
-                VStack{
-                    Spacer()
-                    VStack (){
-                        Image("logo") // Replace "logo" with the name of your logo image asset
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .padding(.bottom,50)
-                        
-                        
-                        TextField("Email", text: $email)
-                            .frame(height: 50)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal,20)
-                        
-                        
-                        
-                        SecureField("Password", text: $password)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal,20)
-                            .frame(height: 50)
-                        
-                        Text(errormessage)
-                            .font(.footnote)
-                            .foregroundColor(.red)
-                        
-                        VStack {
+       
+        VStack {
+            Spacer()
+            if horizontalSizeClass == .compact  {
+                // create phone layout
+                NavigationStack {
+                    VStack{
+                        Spacer()
+                        VStack (){
+                            Image("logo") // Replace "logo" with the name of your logo image asset
+                                .resizable()
+                                .frame(width: 100, height: 100)
+                                .padding(.bottom,50)
                             
                             
-                            Button(action: {
-                                if email.isEmpty && password.isEmpty {
-                                    errormessage = "Empty Mail and Password"
-                                } else if email.isEmpty && !password.isEmpty {
-                                    errormessage = "Empty Mail "
-                                } else if !email.isEmpty && password.isEmpty {
-                                    errormessage = "Empty Password"
-                                } else {
-                                    errormessage = ""
-                                    showProgressBar = true
-                                    loginUser(email: email, password: password) { success in
-                                        print(success)
-                                        if success {
+                            TextField("Email", text: $email)
+                                .frame(height: 50)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.horizontal,20)
+                            
+                            
+                            
+                            SecureField("Password", text: $password)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.horizontal,20)
+                                .frame(height: 50)
+                            
+                            Text(errormessage)
+                                .font(.footnote)
+                                .foregroundColor(.red)
+                            
+                            VStack {
+                                
+                                NavigationLink(destination: MainView(), isActive: $isLoggingIn) {
+                                    EmptyView()
+                                }
+                                Button(action: {
+                                    if email.isEmpty && password.isEmpty {
+                                        errormessage = "Empty Mail and Password"
+                                    } else if email.isEmpty && !password.isEmpty {
+                                        errormessage = "Empty Mail "
+                                    } else if !email.isEmpty && password.isEmpty {
+                                        errormessage = "Empty Password"
+                                    } else {
+                                        errormessage = ""
+                                        showProgressBar = true
+                                        loginUser(email: email, password: password) { success in
                                             print(success)
-                                            isLoggingIn = true
-                                            //showAlert = true // Set flag to show MainView
-                                        } else {
-                                            showProgressBar = false
-                                            showAlert = true
+                                            if success {
+                                                print(success)
+                                                isLoggingIn = true
+                                                //showAlert = true // Set flag to show MainView
+                                            } else {
+                                                showProgressBar = false
+                                                showAlert = true
+                                            }
                                         }
                                     }
+                                }) {
+                                    if showProgressBar {
+                                        
+                                        ProgressView()
+                                            .scaleEffect(2)
+                                            .foregroundColor(.green)
+                                            .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
+                                            .padding(.bottom,20)
+                                        
+                                    } else {
+                                        Text("Log In")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                            .padding()
+                                            .background(Color.black)
+                                            .padding(.horizontal)
+                                    }
                                 }
-                            }) {
-                                if showProgressBar {
+                                /*.fullScreenCover(isPresented: $isLoggingIn, content: {
+                                    MainView().onDisappear(
                                     
-                                    ProgressView()
-                                        .scaleEffect(2)
-                                        .foregroundColor(.green)
-                                        .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
-                                        .padding(.bottom,20)
+                                    )
                                     
-                                } else {
-                                    Text("Log In")
+                                })*/
+                                .alert(isPresented: $showAlert) {
+                                    Alert(
+                                        title: Text("Login Failed"),
+                                        message: Text("Invalid email or password. Please try again."),
+                                        dismissButton: .default(Text("OK"))
+                                    )
+                                    
+                                }
+                                
+                            }
+                            .padding(.top,20)
+                            
+                            NavigationLink(
+                                destination: RegisterView(),
+                                label: {
+                                    Text("Register")
                                         .font(.headline)
                                         .foregroundColor(.white)
                                         .padding()
                                         .background(Color.black)
                                         .padding(.horizontal)
                                 }
-                            }
-                            .fullScreenCover(isPresented: $isLoggingIn, content: {
-                                MainView()
-                            })
-                            .alert(isPresented: $showAlert) {
-                                Alert(
-                                    title: Text("Login Failed"),
-                                    message: Text("Invalid email or password. Please try again."),
-                                    dismissButton: .default(Text("OK"))
-                                )
                                 
-                            }
+                            )
+                            /* Button(action: {
+                             // Add your button action here
+                             
+                             
+                             
+                             }) {
+                             Text("Change Languages")
+                             .font(.headline)
+                             .foregroundColor(.white)
+                             .padding()
+                             .background(Color.black)
+                             .padding(.horizontal)
+                             }*/
                             
                         }
-                        .padding(.top,20)
-                        
                         NavigationLink(
-                            destination: RegisterView(),
+                            destination: ProductsOffline(),
                             label: {
-                                Text("Register")
+                                Text("Products")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                     .padding()
@@ -191,233 +225,173 @@ struct ContentV: View {
                             }
                             
                         )
-                        /* Button(action: {
-                         // Add your button action here
-                         
-                         
-                         
-                         }) {
-                         Text("Change Languages")
-                         .font(.headline)
-                         .foregroundColor(.white)
-                         .padding()
-                         .background(Color.black)
-                         .padding(.horizontal)
-                         }*/
-                        
-                    }
-                    NavigationLink(
-                        destination: ProductsOffline(),
-                        label: {
-                            Text("Products")
+                        Button(action: {
+                            // Add your button action here
+                        }){
+                            Text("Lost Your Password")
                                 .font(.headline)
                                 .foregroundColor(.white)
-                                .padding()
-                                .background(Color.black)
-                                .padding(.horizontal)
+                                .padding(.top,45)
+                            
                         }
                         
-                    )
-                    Button(action: {
-                        // Add your button action here
-                    }){
-                        Text("Lost Your Password")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.top,45)
-                        
-                    }
+                        Spacer()
+                    }   .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
+                        .ignoresSafeArea(.all)
                     
+                    
+                }.onAppear {
+                    // Lock the orientation to portrait
+                    UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                }
+            } else {
+               
+                VStack {
                     Spacer()
-                }   .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
-                    .ignoresSafeArea(.all)
-                
-                
-            }.onAppear {
-                // Lock the orientation to portrait
-                UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-            }
-        } else {
-            NavigationView {
-                 List {
-                     NavigationLink(destination: ProductsOffline()) {
-                         Text("Products")
-                     }
-                     NavigationLink(destination: RegisterView()) {
-                         Text("Register")
-                     }
-                     Button(action: {
-                         // Add your button action here
-                     }) {
-                         Text("Lost Your Password")
-                     }
-                 }
-                 .navigationTitle("My App")
-                 .listStyle(SidebarListStyle())
-             }
-             .onAppear {
-                 // Lock the orientation to portrait
-                 UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-             }
-            
-            
-            // create iPad layout
-          //  Text("Hello World")
-            /*eometryReader { geo in
-                Text("Hello World")
-                  
-                
-                
-            }.onAppear {
-                // Lock the orientation to portrait
-                UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-            }*/
-        }
-     
-        
-    } }
- 
-/*
- VStack {
-     Spacer()
-         VStack {
-             Image("logo") // Replace "logo" with the name of your logo image asset
-                 .resizable()
-                 .frame(width: 200, height: 200)
-                 .padding(.bottom,50)
-             
-            
+                        VStack {
+                            Image("logo") // Replace "logo" with the name of your logo image asset
+                                .resizable()
+                                .frame(width: 200, height: 200)
+                                .padding(.bottom,50)
+                            
+                           
 
-             TextField("Email", text: $email)
-                  .textFieldStyle(RoundedBorderTextFieldStyle())
-                 .padding(.horizontal,20)
-                 
-                 .fixedSize(horizontal: false, vertical: false)
-                 
-             
-            
-             SecureField("Password", text: $password)
-                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                 .padding(.horizontal,20)
-                 .frame(height: 50)
-             
-                 Text(errormessage)
-                 .font(.footnote)
-                 .foregroundColor(.red)
-            
-             VStack {
-                 Button(action: {
-                     if email.isEmpty && password.isEmpty {
-                         errormessage = "Empty Mail and Password"
-                     } else if email.isEmpty && !password.isEmpty {
-                         errormessage = "Empty Mail "
-                     } else if !email.isEmpty && password.isEmpty {
-                         errormessage = "Empty Password"
-                     } else {
-                         errormessage = ""
-                         showProgressBar = true
-                         loginUser(email: email, password: password) { success in
-                             print(success)
-                             if success {
-                               print(success)
-                                   isLoggingIn = true
-                                 //showAlert = true // Set flag to show MainView
-                             } else {
-                                 showProgressBar = false
-                                 showAlert = true
-                             }
-                         }
-                     }
-                 }) {
-                     if showProgressBar {
+                            TextField("Email", text: $email)
+                                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.horizontal,20)
                                 
-                         ProgressView()
-                             .scaleEffect(2)
-                             .foregroundColor(.green)
-                             .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
-                             .padding(.bottom,20)
+                                .fixedSize(horizontal: false, vertical: false)
+                                
+                            
+                           
+                            SecureField("Password", text: $password)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.horizontal,20)
+                                .frame(height: 50)
+                            
+                                Text(errormessage)
+                                .font(.footnote)
+                                .foregroundColor(.red)
+                           
+                            VStack {
+                                Button(action: {
+                                    if email.isEmpty && password.isEmpty {
+                                        errormessage = "Empty Mail and Password"
+                                    } else if email.isEmpty && !password.isEmpty {
+                                        errormessage = "Empty Mail "
+                                    } else if !email.isEmpty && password.isEmpty {
+                                        errormessage = "Empty Password"
+                                    } else {
+                                        errormessage = ""
+                                        showProgressBar = true
+                                        loginUser(email: email, password: password) { success in
+                                            print(success)
+                                            if success {
+                                              print(success)
+                                                  isLoggingIn = true
+                                                //showAlert = true // Set flag to show MainView
+                                            } else {
+                                                showProgressBar = false
+                                                showAlert = true
+                                            }
+                                        }
+                                    }
+                                }) {
+                                    if showProgressBar {
+                                               
+                                        ProgressView()
+                                            .scaleEffect(2)
+                                            .foregroundColor(.green)
+                                            .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
+                                            .padding(.bottom,20)
 
-                            } else {
-                                Text("Log In")
+                                           } else {
+                                               Text("Log In")
+                                                   .font(.headline)
+                                                   .foregroundColor(.white)
+                                                   .padding()
+                                                   .background(Color.black)
+                                                   .padding(.horizontal)
+                                           }
+                                }
+                                .fullScreenCover(isPresented: $isLoggingIn, content: {
+                                    MainView()
+                                })
+                                .alert(isPresented: $showAlert) {
+                                    Alert(
+                                        title: Text("Login Failed"),
+                                        message: Text("Invalid email or password. Please try again."),
+                                        dismissButton: .default(Text("OK"))
+                                    )
+                                    
+                                }
+                                
+                            }
+                            .padding(.top,20)
+                        
+                            Button(action: {
+                                // navigate to RegisterView
+                                showRegisterView = true
+                            }) {
+                                Text("Register")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                     .padding()
                                     .background(Color.black)
                                     .padding(.horizontal)
                             }
-                 }
-                 .fullScreenCover(isPresented: $isLoggingIn, content: {
-                     MainView()
-                 })
-                 .alert(isPresented: $showAlert) {
-                     Alert(
-                         title: Text("Login Failed"),
-                         message: Text("Invalid email or password. Please try again."),
-                         dismissButton: .default(Text("OK"))
-                     )
-                     
-                 }
-                 
-             }
-             .padding(.top,20)
-         
-             Button(action: {
-                 // navigate to RegisterView
-                 showRegisterView = true
-             }) {
-                 Text("Register")
-                     .font(.headline)
-                     .foregroundColor(.white)
-                     .padding()
-                     .background(Color.black)
-                     .padding(.horizontal)
-             }
-             .fullScreenCover(isPresented: $showRegisterView) {
-                 RegisterView()
-             }
+                            .fullScreenCover(isPresented: $showRegisterView) {
+                                RegisterView()
+                            }
 
-            /* Button(action: {
-                 // Add your button action here
-                 
+                           /* Button(action: {
+                                // Add your button action here
+                                
+                                   
+                                
+                            }) {
+                                Text("Change Languages")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.black)
+                                    .padding(.horizontal)
+                            }*/
+                           
+                        }
+                    Button(action: {
+                        // navigate to RegisterView
+                        showProductView = true
+                    }) {
+                        Text("Products")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.black)
+                            .padding(.horizontal)
+                    }
+                    .fullScreenCover(isPresented: $showProductView) {
+                        ProductsOffline()
+                    }
+                        Button(action: {
+                            // Add your button action here
+                        }){
+                            Text("Lost Your Password")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.top,45)
+                                
+                        }
                     
-                 
-             }) {
-                 Text("Change Languages")
-                     .font(.headline)
-                     .foregroundColor(.white)
-                     .padding()
-                     .background(Color.black)
-                     .padding(.horizontal)
-             }*/
+                        Spacer()
+                        }
+                }
+                
+              
+            } .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
+            .ignoresSafeArea(.all)
+    
             
-         }
-     Button(action: {
-         // navigate to RegisterView
-         showProductView = true
-     }) {
-         Text("Register")
-             .font(.headline)
-             .foregroundColor(.white)
-             .padding()
-             .background(Color.black)
-             .padding(.horizontal)
-     }
-     .fullScreenCover(isPresented: $showProductView) {
-         ProductsOffline()
-     }
-         Button(action: {
-             // Add your button action here
-         }){
-             Text("Lost Your Password")
-                 .font(.headline)
-                 .foregroundColor(.white)
-                 .padding(.top,45)
-                 
-         }
-     
-         Spacer()
-         }
- }  .background(LinearGradient(gradient: gradiant, startPoint: .top, endPoint: .bottom))
-         .ignoresSafeArea(.all)
+            
+        } }
  
- */
